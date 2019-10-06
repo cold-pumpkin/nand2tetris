@@ -1,3 +1,7 @@
-.pdf
-.zip
+*.pdf
+*.zip
+*.class
+*.sh
+*.bat
+*.dat
 tools/
