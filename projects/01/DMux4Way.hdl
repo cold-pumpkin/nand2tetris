@@ -9,12 +9,20 @@
  *                {0, in, 0, 0} if sel == 01
  *                {0, 0, in, 0} if sel == 10
  *                {0, 0, 0, in} if sel == 11
- */
+ *
+ *  sel[1]  sel[0]  |   w1   w2  |   a   b   c   d
+ *    0       0     |   in    0  |   in  0   0   0
+ *    0       1     |   in    0  |   0   in  0   0
+ *    1       0     |    0   in  |   0   0   in  0
+ *    1       1     |    0   in  |   0   0   0   in
+ */ 
 
 CHIP DMux4Way {
     IN in, sel[2];
     OUT a, b, c, d;
 
     PARTS:
-    // Put your code here:
+        DMux(in=in, sel=sel[1], a=w1, b=w2);
+        DMux(in=w1, sel=sel[1], a=a, b=b);
+        DMux(in=w2, sel=sel[0], a=c, b=d);
 }
