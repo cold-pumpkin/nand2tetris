@@ -42,5 +42,27 @@ CHIP ALU {
         ng; // 1 if (out < 0),  0 otherwise
 
     PARTS:
-   // Put you code here:
+        Mux16(a=x, b=false, sel=zx, out=x1);         // zx = 1 -> zero the x (= false)
+        Not16(in=x1, out=negatedX);                  // return negated x
+        Mux16(a=x1, b=negatedX, sel=nx, out=x2);     // nx = 1 -> negate the x 
+
+        Mux16(a=y, b=false, sel=zy, out=y1);         // zy = 1 -> zero the y (= false)
+        Not16(in=y1, out=negatedY);                  // return negated y
+        Mux16(a=y1, b=negatedY, sel=ny, out=y2);     // ny = 1 -> negate the y 
+
+        Add16(a=x2, b=y2, out=xAddy);
+        And16(a=x2, b=y2, out=xAndy);
+        Mux16(a=xAndy, b=xAddy, sel=f, out=fxy);     // f = 0 -> x&y, f = 1 -> x+y
+
+        Not16(in=fxy, out=negatedFxy);
+        Mux16(a=fxy, b=negatedFxy, sel=no, out=out, out[15]=msb, out[0..7]=leftOut, out[8..15]=rightOut); 
+                                                     // no = 1 -> negate the out 
+                                                     // return MSB
+        //Or16Way(in=out, out=orOut);
+        Or8Way(in=leftOut, out=orLeftOut);           // check if out is 0
+        Or8Way(in=rightOut, out=orRightOut);
+        Or(a=orLeftOut, b=orRightOut, out=orOut);
+        Not(in=orOut, out=zr);                       // out = 0 -> zr = 1, otherwise -> zr = 0
+
+        And(a=msb, b=true, out=ng);                  // out < 0 -> ng = 1, otherwise -> zr = 1
 }
